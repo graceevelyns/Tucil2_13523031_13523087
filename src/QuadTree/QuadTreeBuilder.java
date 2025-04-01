@@ -14,7 +14,10 @@ public class QuadTreeBuilder {
      * @return                  QuadTreeNode yang merepresentasikan blok gambar yang sudah diproses
      */
     public QuadTreeNode buildQuadtree(int[][] image, int x, int y, int width, int height, int errorMethod, double threshold, int minBlockSize) {
-        double error = ErrorCalculator.calculateError(image, x, y, width, height, errorMethod);
+        ErrorCalculator ErrorCalculator = new ErrorCalculator();
+        double error = ErrorCalculator.calculateError(image, width, height, errorMethod);
+        // butuh validasi errorMethod di antara 1 - 4
+        // + special case buat SSIM
 
         // jika error > threshold dan ukuran blok cukup besar untuk dibagi, bagi blok menjadi 4 sub-blok
         if (error > threshold && (width * height) > minBlockSize) {
@@ -48,13 +51,13 @@ public class QuadTreeBuilder {
     private int[] calculateAverageColor(int[][] image, int x, int y, int width, int height) {
         int[] color = new int[3];
         int totalPixels = width * height;
-        for (int i = y; i < y + height; i++) {
-            for (int j = x; j < x + width; j++) {
-                color[0] += (image[i][j] >> 16) & 0xFF; // red
-                color[1] += (image[i][j] >> 8) & 0xFF;  // green
-                color[2] += image[i][j] & 0xFF;         // blue
-            }
+
+        for (int i = 0; i < totalPixels; i++) {
+            color[0] += image[i][0];
+            color[1] += image[i][1];
+            color[2] += image[i][2];
         }
+
         color[0] = (int) Math.round(color[0] / totalPixels);
         color[1] = (int) Math.round(color[1] / totalPixels);
         color[2] = (int) Math.round(color[2] / totalPixels);       

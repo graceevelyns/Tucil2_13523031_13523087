@@ -31,11 +31,11 @@ public class ErrorCalculator {
     public int getColor(int[] pixel, String color) {
         switch (color) {
             case "red":
-                return pixel[2];
+                return pixel[0];
             case "green":
                 return pixel[1];
             case "blue":
-                return pixel[0];
+                return pixel[2];
             default:
                 return 0;
         }

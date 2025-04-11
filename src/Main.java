@@ -84,7 +84,7 @@ public class Main {
         }
 
         while (true) {
-            System.out.print("\nambang batas: ");
+            System.out.print("\nambang batas (0-100): ");
 
             if (scan.hasNextDouble()) {
                 threshold = scan.nextDouble();

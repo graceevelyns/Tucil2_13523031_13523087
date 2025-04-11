@@ -36,7 +36,14 @@ public class QuadTreeProcessor {
             // bangun struktur quadtree
             System.out.println("(/^-^)/ sedang membangun quadtree...");
             QuadTreeBuilder builder = new QuadTreeBuilder();
-            QuadTreeNode root = builder.buildQuadtree(imagePixels, 0, 0, width, height, errorMethod, threshold, minBlockSize);
+
+            // untuk metode perhitungan error non-SSIM
+            QuadTreeNode root;
+            if (errorMethod != 5) {
+                root = builder.buildQuadtree(imagePixels, 0, 0, width, height, errorMethod, threshold, minBlockSize);
+            } else {
+                root = builder.buildQuadtreewithSSIM(imagePixels, 0, 0, width, height, threshold, minBlockSize);
+            }
 
             // hitung statistik pohon
             calculateTreeDepthAndNodeCount(root, 0);

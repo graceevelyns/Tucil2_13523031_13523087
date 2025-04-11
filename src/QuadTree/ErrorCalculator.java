@@ -89,7 +89,7 @@ public class ErrorCalculator {
     // menghitung variansi dalam sebuah blok
     public double variance(int[][] image, int startX, int startY, int width, int height) {
         double[] variance = varianceColor(image, startX, startY, width, height);
-        return (variance[0] + variance[1] + variance[2]) / 3;
+        return ((variance[0] + variance[1] + variance[2]) / 3);
     }
 
     // menghitung kovariansi sebuah color antara dua buah blok
@@ -134,7 +134,7 @@ public class ErrorCalculator {
         MAD[1] /= totalPixels;
         MAD[2] /= totalPixels;
 
-        return (MAD[0] + MAD[1] + MAD[2]) / 3;
+        return ((MAD[0] + MAD[1] + MAD[2]) / 3);
     }
 
     // menghitung MPD dalam sebuah blok
@@ -159,7 +159,7 @@ public class ErrorCalculator {
             }
         }
 
-        return ((maxRed - minRed) + (maxGreen - minGreen) + (maxBlue - minBlue)) / 3.0;
+        return (((maxRed - minRed) + (maxGreen - minGreen) + (maxBlue - minBlue)) / 3.0);
     }
 
     // menghitung probabilitas distribusi warna dalam sebuah blok
@@ -255,7 +255,7 @@ public class ErrorCalculator {
             }
         }
 
-        return ((entropy[0] * -1) + (entropy[1] * -1) + entropy[2] * -1) / 3;
+        return (((entropy[0] * -1) + (entropy[1] * -1) + entropy[2] * -1) / 3) * 100 / 8;
     }
 
     // menghitung SSIM antara dua buah blok berukuran sama

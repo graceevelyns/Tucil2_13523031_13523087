@@ -1,5 +1,4 @@
 import QuadTree.QuadTreeProcessor;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +27,7 @@ public class Main {
         double threshold;
         int minBlockSize;
         String outputImagePath;
+        String outputGifPath = "";
 
         while (true) {
             System.out.print("\nalamat absolut gambar yang akan dikompresi: ");
@@ -129,22 +129,27 @@ public class Main {
             break;
         }
 
-        // while (true) {
-        //     System.out.print("\nalamat absolut GIF hasil kompresi: ");
-        //     outputImagePath = scan.nextLine();
+        System.out.print("\nbuat GIF animasi? (y/n): ");
+        String createGif = scan.nextLine().toLowerCase();
+        
+        if (createGif.equals("y")) {
+            while (true) {
+                System.out.print("\nalamat absolut GIF hasil kompresi: ");
+                outputGifPath = scan.nextLine();
 
-        //     if (!isValidPath(outputImagePath, false)) {
-        //         System.out.println("Path yang kamu masukkan tidak valid untuk GIF! o(T-T)o");
-        //         continue;
-        //     }
+                if (!isValidPath(outputGifPath, false)) {
+                    System.out.println("Path yang kamu masukkan tidak valid untuk GIF! o(T-T)o");
+                    continue;
+                }
 
-        //     break;
-        // }
+                break;
+            }
+        }
 
         scan.close();
 
         QuadTreeProcessor processor = new QuadTreeProcessor();
-        processor.processImage(inputPath, outputImagePath, errorMethod, threshold, minBlockSize);
+        processor.processImage(inputPath, outputImagePath, errorMethod, threshold, minBlockSize, outputGifPath);
     }
 
     public static boolean isValidPath(String path, boolean gambar) {
@@ -156,24 +161,18 @@ public class Main {
                 return false;
             }
 
+            if (path.lastIndexOf(".") == -1) {
+                return false;
+            }
+
             String extension = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
-            String[] validExtensions = {"jpg", "jpeg", "png", "bmp", "gif"};
             
             if (gambar) {
-                for (int i = 0; i < 3; i++) {
-                    if (extension.equals(validExtensions[i])) {
-                        return true;
-                    }
-                }
+                return extension.equals("jpg") || extension.equals("jpeg") || 
+                       extension.equals("png");
             } else {
-                for (int i = 0; i < 2; i++) {
-                    if (extension.equals(validExtensions[i + 3])) {
-                        return true;
-                    }
-                } 
+                return extension.equals("gif");
             }
-    
-            return false;
     
         } catch (InvalidPathException e) {
             return false;

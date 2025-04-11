@@ -1,21 +1,9 @@
 package QuadTree;
 
 public class QuadTreeBuilder {
-    /**
-     * Fungsi untuk membangun QuadTree dengan metode pembagian rekursif (divide and conquer)
-     * @param image             matriks piksel gambar yang akan diproses
-     * @param x                 koordinat X dari kiri atas blok gambar
-     * @param y                 koordinat Y dari kiri atas blok gambar
-     * @param width             lebar blok gambar
-     * @param height            tinggi blok gambar
-     * @param errorMethod       metode perhitungan error yang digunakan
-     * @param threshold         nilai ambang batas error (untuk menentukan apakah blok harus dibagi lebih lanjut atau tidak)
-     * @param minBlockSize      ukuran minimum blok gambar yang tidak boleh dibagi lebih lanjut
-     * @return                  QuadTreeNode yang merepresentasikan blok gambar yang sudah diproses
-     */
     public QuadTreeNode buildQuadtree(int[][] image, int x, int y, int width, int height, int errorMethod, double threshold, int minBlockSize) {
-        ErrorCalculator ErrorCalculator = new ErrorCalculator();
-        double error = ErrorCalculator.calculateError(image, width, height, errorMethod);
+        ErrorCalculator errorCalculator = new ErrorCalculator();
+        double error = errorCalculator.calculateError(image, width, height, errorMethod);
         // butuh validasi errorMethod di antara 1 - 4
         // + special case buat SSIM
 
@@ -23,13 +11,13 @@ public class QuadTreeBuilder {
         if (error > threshold && (width * height) > minBlockSize) {
             QuadTreeNode[] children = new QuadTreeNode[4];
             int halfWidth = (int) Math.ceil(width / 2.0);
-            int halfHeight = (int) Math.ceil(height / 2.0);        
+            int halfHeight = (int) Math.ceil(height / 2.0);     
 
             // divide
-            children[0] = buildQuadtree(image, x, y, halfWidth, halfHeight, errorMethod, threshold, minBlockSize);                          // top-left
-            children[1] = buildQuadtree(image, x + halfWidth, y, halfWidth, halfHeight, errorMethod, threshold, minBlockSize);              // top-right
-            children[2] = buildQuadtree(image, x, y + halfHeight, halfWidth, halfHeight, errorMethod, threshold, minBlockSize);             // bottom-left
-            children[3] = buildQuadtree(image, x + halfWidth, y + halfHeight, halfWidth, halfHeight, errorMethod, threshold, minBlockSize); // bottom-right
+            children[0] = buildQuadtree(image, x, y, halfWidth, halfHeight, errorMethod, threshold, minBlockSize);
+            children[1] = buildQuadtree(image, x + halfWidth, y, width - halfWidth, halfHeight, errorMethod, threshold, minBlockSize);
+            children[2] = buildQuadtree(image, x, y + halfHeight, halfWidth, height - halfHeight, errorMethod, threshold, minBlockSize);
+            children[3] = buildQuadtree(image, x + halfWidth, y + halfHeight, width - halfWidth, height - halfHeight, errorMethod, threshold, minBlockSize);
 
             return new QuadTreeNode(x, y, width, height, children);
         }
@@ -39,29 +27,25 @@ public class QuadTreeBuilder {
         return new QuadTreeNode(x, y, width, height, color);
     }
 
-    /**
-     * Menghitung rata-rata RGB dari sebuah blok gambar
-     * @param image         matriks piksel gambar
-     * @param x             koordinat kiri atas (x) blok gambar
-     * @param y             koordinat kiri atas (y) blok gambar
-     * @param width         lebar blok gambar
-     * @param height        tinggi blok gambar
-     * @return              array berisi warna rata-rata dalam format [Red, Green, Blue]
-     */
+    // menghitung rata-rata RGB sebuah blok gambar
     private int[] calculateAverageColor(int[][] image, int x, int y, int width, int height) {
-        int[] color = new int[3];
-        int totalPixels = width * height;
+        long[] sum = new long[3];
+        int count = 0;
 
-        for (int i = 0; i < totalPixels; i++) {
-            color[0] += image[i][0];
-            color[1] += image[i][1];
-            color[2] += image[i][2];
+        for (int i = y; i < y + height && i < image.length; i++) {
+            for (int j = x; j < x + width && j < image[i].length; j++) {
+                int pixel = image[i][j];
+                sum[0] += (pixel >> 16) & 0xFF;
+                sum[1] += (pixel >> 8) & 0xFF;
+                sum[2] += pixel & 0xFF;
+                count++;
+            }
         }
 
-        color[0] = (int) Math.round(color[0] / totalPixels);
-        color[1] = (int) Math.round(color[1] / totalPixels);
-        color[2] = (int) Math.round(color[2] / totalPixels);       
-        
-        return color;
+        return new int[] {
+            (int) (sum[0] / count),
+            (int) (sum[1] / count),
+            (int) (sum[2] / count)
+        };
     }
 }
